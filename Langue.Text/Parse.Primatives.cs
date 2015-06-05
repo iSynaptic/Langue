@@ -2,7 +2,7 @@
 
 namespace Langue
 {
-    public static partial class Parse
+    public static partial class Text
     {
         public static Parser<char> AnyChar = context =>
         {

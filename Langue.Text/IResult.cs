@@ -9,7 +9,7 @@ namespace Langue
         Boolean HasValue { get; }
         String Description { get; }
 
-        Context Context { get; }
+        TextContext Context { get; }
 
         IEnumerable<ParseError> Errors { get; }
     }

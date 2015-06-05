@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Langue
 {
-    public static partial class Parse
+    public static partial class Text
     {
         public static Parser<ResultInfo<T>> WithInfo<T>(this Parser<T> self) => context =>
         {

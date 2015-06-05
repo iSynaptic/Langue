@@ -2,7 +2,7 @@
 
 namespace Langue
 {
-    public class Context
+    public class TextContext
     {
         public readonly Position ConsumedTo;
         public readonly Position ReadTo;
@@ -15,22 +15,22 @@ namespace Langue
 
         public readonly Parser<object> Interleaving;
 
-        public Context(string input)
+        public TextContext(string input)
             : this(input, null)
         {
         }
 
-        public Context(string input, string name)
+        public TextContext(string input, string name)
             : this(input, name, null)
         {
         }
 
-        public Context(string input, string name, Parser<object> interleaving)
+        public TextContext(string input, string name, Parser<object> interleaving)
             : this(input, name, interleaving, default(Position), default(Position))
         {
         }
 
-        private Context(string input, string name, Parser<object> interleaving, Position consumedTo, Position readTo)
+        private TextContext(string input, string name, Parser<object> interleaving, Position consumedTo, Position readTo)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
 
@@ -42,11 +42,11 @@ namespace Langue
             ReadTo = readTo;
         }
 
-        public Context Read(int count) => Move(count, false);
-        public Context ReadAndConsume(int count) => Move(count, true);
-        public Context Consume() => Move(0, true);
+        public TextContext Read(int count) => Move(count, false);
+        public TextContext ReadAndConsume(int count) => Move(count, true);
+        public TextContext Consume() => Move(0, true);
 
-        private Context Move(int count, bool consume)
+        private TextContext Move(int count, bool consume)
         {
             if (count < 0)
                 throw new ArgumentOutOfRangeException(nameof(count));
@@ -67,13 +67,13 @@ namespace Langue
                     : newReadTo.Advance();
             }
 
-            return new Context(Input, Name, Interleaving, consume ? newReadTo : ConsumedTo, newReadTo);
+            return new TextContext(Input, Name, Interleaving, consume ? newReadTo : ConsumedTo, newReadTo);
         }
 
-        public Context WithInterleave(Parser<Object> interleaving)
-            => new Context(Input, Name, interleaving, ConsumedTo, ReadTo);
+        public TextContext WithInterleave(Parser<Object> interleaving)
+            => new TextContext(Input, Name, interleaving, ConsumedTo, ReadTo);
 
-        public static implicit operator Context(string content) 
-            => new Context(content, null);
+        public static implicit operator TextContext(string content) 
+            => new TextContext(content, null);
     }
 }
