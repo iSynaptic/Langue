@@ -59,6 +59,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Langue.Core\Langue.Core.csproj">
+      <Project>{79f7cf22-3bae-446a-95e9-f39cc939425f}</Project>
+      <Name>Langue.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Langue.Json\Langue.Json.csproj">
       <Project>{7169e758-5ce3-4262-abe1-c0eb016865ac}</Project>
       <Name>Langue.Json</Name>
@@ -70,10 +74,6 @@
     <ProjectReference Include="..\Langue.Xml\Langue.Xml.csproj">
       <Project>{1c80c204-0897-407b-8069-dedce815ad5c}</Project>
       <Name>Langue.Xml</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Langue\Langue.csproj">
-      <Project>{79f7cf22-3bae-446a-95e9-f39cc939425f}</Project>
-      <Name>Langue</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

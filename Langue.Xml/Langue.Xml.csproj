@@ -41,9 +41,9 @@
     <Compile Include="Xml.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Langue\Langue.csproj">
+    <ProjectReference Include="..\Langue.Core\Langue.Core.csproj">
       <Project>{79f7cf22-3bae-446a-95e9-f39cc939425f}</Project>
-      <Name>Langue</Name>
+      <Name>Langue.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
