@@ -8,15 +8,11 @@ namespace Langue
 {
     public static partial class Text
     {
-        public static Pattern<IEnumerable<T>, TextContext> Delimit<T>(this Pattern<T, TextContext> parser, Char delimiter)
-        {
-            return parser.Delimit(Char(delimiter));
-        }
+        public static Pattern<IEnumerable<T>, TextContext> Delimit<T>(this Pattern<T, TextContext> parser, Char delimiter) 
+            => parser.Delimit(Char(delimiter));
 
         public static Pattern<IEnumerable<T>, TextContext> Delimit<T>(this Pattern<T, TextContext> parser, String delimiter)
-        {
-            return parser.Delimit(Literal(delimiter));
-        }
+            => parser.Delimit(Literal(delimiter));
 
         public static Pattern<IEnumerable<T>, TextContext> Delimit<T, TDelimiter>(this Pattern<T, TextContext> parser, Pattern<TDelimiter, TextContext> delimiter)
         {
@@ -26,27 +22,27 @@ namespace Langue
                            from d in delimiter
                            from item in parser
                            select item
-                       ).Many()
+                       ).ZeroOrMore("many")
                    select new[] { first }.Concat(remaining);
         }
 
-        public static Pattern<IEnumerable<T>, TextContext> Many<T>(this Pattern<T, TextContext> pattern)
+        public static Pattern<IEnumerable<T>, TextContext> ZeroOrMore<T>(this Pattern<T, TextContext> parser, string description)
         {
-            if (pattern == null) throw new ArgumentNullException("parser");
-            return i =>
+            if (parser == null) throw new ArgumentNullException(nameof(parser));
+
+            return context =>
             {
-                var remainder = i;
+                var ctx = context;
                 var result = new List<T>();
-                var r = pattern(i);
-                while (r.WasSuccessful)
+                var m = parser(ctx);
+                while (m.HasValue)
                 {
-                    if (remainder == r.Remainder)
-                        break;
-                    result.Add(r.Value);
-                    remainder = r.Remainder;
-                    r = pattern(remainder);
+                    result.Add(m.Value);
+                    ctx = m.Context;
+                    m = parser(ctx);
                 }
-                return Result.Success<IEnumerable<T>>(result, remainder);
+
+                return Match.Success(result, description, ctx);
             };
         }
     }

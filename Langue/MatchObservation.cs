@@ -5,13 +5,14 @@ namespace Langue
 {
     public class MatchObservation
     {
-        public MatchObservation(string message, MatchObservationSeverity severity)
+        public MatchObservation(string message)
         {
+            if (string.IsNullOrWhiteSpace(message))
+                throw new ArgumentException("You must provide a message.", nameof(message));
+
             Message = message;
-            Severity = severity;
         }
 
         public string Message { get; }
-        public MatchObservationSeverity Severity { get; }
     }
 }

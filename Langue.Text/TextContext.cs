@@ -8,34 +8,34 @@ namespace Langue
         public readonly Position ReadTo;
 
         public readonly string Input;
-        public readonly string Name;
+        public readonly string Source;
 
         public bool AtEnd => Input.Length == ReadTo.Index;
         public char Current => !AtEnd ? Input[ReadTo.Index] : default(char);
 
-        public readonly Parser<object> Interleaving;
+        public readonly Pattern<object, TextContext> Interleaving;
 
         public TextContext(string input)
             : this(input, null)
         {
         }
 
-        public TextContext(string input, string name)
-            : this(input, name, null)
+        public TextContext(string input, string source)
+            : this(input, source, null)
         {
         }
 
-        public TextContext(string input, string name, Parser<object> interleaving)
-            : this(input, name, interleaving, default(Position), default(Position))
+        public TextContext(string input, string source, Pattern<object, TextContext> interleaving)
+            : this(input, source, interleaving, default(Position), default(Position))
         {
         }
 
-        private TextContext(string input, string name, Parser<object> interleaving, Position consumedTo, Position readTo)
+        private TextContext(string input, string source, Pattern<object, TextContext> interleaving, Position consumedTo, Position readTo)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
 
             Input = input;
-            Name = name ?? "";
+            Source = source ?? "";
             Interleaving = interleaving;
 
             ConsumedTo = consumedTo;
@@ -67,11 +67,11 @@ namespace Langue
                     : newReadTo.Advance();
             }
 
-            return new TextContext(Input, Name, Interleaving, consume ? newReadTo : ConsumedTo, newReadTo);
+            return new TextContext(Input, Source, Interleaving, consume ? newReadTo : ConsumedTo, newReadTo);
         }
 
-        public TextContext WithInterleave(Parser<Object> interleaving)
-            => new TextContext(Input, Name, interleaving, ConsumedTo, ReadTo);
+        public TextContext WithInterleave(Pattern<Object, TextContext> interleaving)
+            => new TextContext(Input, Source, interleaving, ConsumedTo, ReadTo);
 
         public static implicit operator TextContext(string content) 
             => new TextContext(content, null);

@@ -37,8 +37,7 @@
     <Compile Include="IMatch.cs" />
     <Compile Include="Match.cs" />
     <Compile Include="MatchObservation.cs" />
-    <Compile Include="MatchObservationSeverity.cs" />
-    <Compile Include="MatchOutcome.cs" />
+    <Compile Include="Optional.cs" />
     <Compile Include="Pattern.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

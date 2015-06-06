@@ -3,23 +3,23 @@ using System.Linq;
 
 namespace Langue
 {
-    public class ParseError
+    public class ParseError : MatchObservation
     {
-        public ParseError(PositionRange position, string message)
-            : this(position, message, null)
+        private static readonly IEnumerable<MatchObservation> Empty = new MatchObservation[0];
+
+        public ParseError(string message, PositionRange position)
+            : this(message, position, null)
         {
         }
 
-        public ParseError(PositionRange position, string message, IEnumerable<ParseError> errors)
+        public ParseError(string message, PositionRange position, IEnumerable<MatchObservation> observations) 
+            : base(message)
         {
             Position = position;
-            Message = message;
-            Errors = (errors ?? new ParseError[0]).ToArray();
+            Observations = observations?.ToArray() ?? Empty;
         }
 
         public PositionRange Position { get; }
-        public string Message { get; }
-
-        public IEnumerable<ParseError> Errors { get; }
+        public IEnumerable<MatchObservation> Observations { get; }
     }
 }

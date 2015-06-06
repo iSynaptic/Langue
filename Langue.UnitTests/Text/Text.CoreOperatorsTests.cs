@@ -6,21 +6,21 @@ using NUnit.Framework;
 namespace Langue
 {
     [TestFixture]
-    public partial class ParseTests
+    public partial class TextTests
     {
         [Test]
         public void InterleaveWith_WithMultipleInterleaves_Parses()
         {
-            var parser = from greeting in Parse.Literal("Hello")
-                         from sep in Parse.Literal(",")
-                         from subject in Parse.Literal("World")
-                         from punc in Parse.Literal("!")
+            var parser = from greeting in Text.Literal("Hello")
+                         from sep in Text.Literal(",")
+                         from subject in Text.Literal("World")
+                         from punc in Text.Literal("!")
                          select new {greeting, sep, subject, punc};
 
             parser = parser
-                .InterleaveWith(Parse.Literal(" "))
-                .InterleaveWith(Parse.Literal("\r"))
-                .InterleaveWith(Parse.Literal("\n"));
+                .InterleaveWith(Text.Literal(" "))
+                .InterleaveWith(Text.Literal("\r"))
+                .InterleaveWith(Text.Literal("\n"));
 
             var result = parser(@"  
 
@@ -48,15 +48,15 @@ namespace Langue
         [Test]
         public void Or_WithNoResults_UsesDescriptionToBuildErrorMessage()
         {
-            var parser = Parse.Literal("public").Or(
-                Parse.Literal("private")).DescribeAs("visibility modifier").Or(
-                    Parse.Literal("class").DescribeAs("class keyword"));
+            var parser = Text.Literal("public").Or(
+                Text.Literal("private")).DescribeAs("visibility modifier").Or(
+                    Text.Literal("class").DescribeAs("class keyword"));
 
             var result = parser("D");
             result.HasValue.Should().BeFalse();
 
-            result.Errors.Count().Should().Be(1);
-            var error = result.Errors.ElementAt(0);
+            result.Observations.Count().Should().Be(1);
+            var error = result.Observations.ElementAt(0);
 
             error.Message.Should().Be("Expected: visibility modifier or class keyword");
         }

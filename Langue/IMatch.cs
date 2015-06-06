@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace Langue
 {
-    public interface IMatch<out T, TContext>
+    public interface IMatch<out T, out TContext>
     {
         T Value { get; }
-        MatchOutcome Outcome { get; }
+        bool HasValue { get; }
 
         string Description { get; }
 

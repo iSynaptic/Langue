@@ -49,16 +49,20 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContextTests.cs" />
-    <Compile Include="Parse.CoreOperatorsTests.cs" />
-    <Compile Include="Parse.PrimativesTests.cs" />
-    <Compile Include="PositionTests.cs" />
+    <Compile Include="Text\Text.CoreOperatorsTests.cs" />
+    <Compile Include="Text\Text.PrimativeTests.cs" />
+    <Compile Include="Text\TextContextTests.cs" />
+    <Compile Include="Text\PositionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Langue.Text\Langue.Text.csproj">
+      <Project>{91fe32fe-b27b-49e3-97d2-1f084c5f1222}</Project>
+      <Name>Langue.Text</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Langue\Langue.csproj">
       <Project>{79f7cf22-3bae-446a-95e9-f39cc939425f}</Project>
       <Name>Langue</Name>

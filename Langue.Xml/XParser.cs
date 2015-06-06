@@ -2,5 +2,5 @@
 
 namespace Langue
 {
-    public delegate IResult<T, XElement> XParser<out T>(Context<XElement> context);
+    //public delegate IResult<T, XElement> XParser<out T>(Context<XElement> context);
 }
