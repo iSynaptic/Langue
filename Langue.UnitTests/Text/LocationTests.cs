@@ -6,16 +6,16 @@ using NUnit.Framework;
 namespace Langue
 {
     [TestFixture]
-    public class PositionTests
+    public class LocationTests
     {
         [Test]
         public void DefaultValue_HasIndex0Line1Column1()
         {
-            var pos = default(Location);
+            var loc = default(Location);
 
-            pos.Index.Should().Be(0);
-            pos.Line.Should().Be(1);
-            pos.Column.Should().Be(1);
+            loc.Index.Should().Be(0);
+            loc.Line.Should().Be(1);
+            loc.Column.Should().Be(1);
         }
 
         [Test]
@@ -57,11 +57,11 @@ namespace Langue
         [Test]
         public void ProvidedValuesAreReturned()
         {
-            var pos = new Location(45, 13, 4);
+            var loc = new Location(45, 13, 4);
 
-            pos.Index.Should().Be(45);
-            pos.Line.Should().Be(13);
-            pos.Column.Should().Be(4);
+            loc.Index.Should().Be(45);
+            loc.Line.Should().Be(13);
+            loc.Column.Should().Be(4);
         }
 
         [Test]
@@ -99,15 +99,15 @@ namespace Langue
         [Test]
         public void NullValue_IsNotEqual()
         {
-            var pos = default(Location);
-            pos.Equals(null).Should().BeFalse();
+            var loc = default(Location);
+            loc.Equals(null).Should().BeFalse();
         }
 
         [Test]
-        public void NonPositionValue_IsNotEqual()
+        public void NonLocationValue_IsNotEqual()
         {
-            var pos = default(Location);
-            pos.Equals("Hello!").Should().BeFalse();
+            var loc = default(Location);
+            loc.Equals("Hello!").Should().BeFalse();
         }
 
         [Test]
@@ -134,8 +134,8 @@ namespace Langue
         [Test]
         public void Advance_IncrementsIndexAndColumn()
         {
-            var pos = new Location(42, 4, 13);
-            var newPos = pos.Advance();
+            var loc = new Location(42, 4, 13);
+            var newPos = loc.Advance();
 
             newPos.Index.Should().Be(43);
             newPos.Line.Should().Be(4);
@@ -145,8 +145,8 @@ namespace Langue
         [Test]
         public void AdvanceWithNewLine_IncrementsIndexAndLineAndResetsColumn()
         {
-            var pos = new Location(42, 4, 13);
-            var newPos = pos.AdvanceWithNewLine();
+            var loc = new Location(42, 4, 13);
+            var newPos = loc.AdvanceWithNewLine();
 
             newPos.Index.Should().Be(43);
             newPos.Line.Should().Be(5);

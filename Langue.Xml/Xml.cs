@@ -14,8 +14,8 @@ namespace Langue
             {
                 var attribute = ctx.Attribute(name);
                 return attribute != null
-                    ? Match.Success(attribute.Value, "", ctx)
-                    : Match<String>.Failure("", ctx);
+                    ? Match.Success(attribute.Value, ctx, "")
+                    : Match<String>.Failure(ctx, "");
             };
         }
 
@@ -25,12 +25,12 @@ namespace Langue
             {
                 var el = ctx.XPathSelectElement(xpath);
                 if (el == null)
-                    return Match<String>.Failure("", ctx);
+                    return Match<String>.Failure(ctx, "");
 
                 var attribute = el.Attribute(name);
                 return attribute != null
-                    ? Match.Success(attribute.Value, "", ctx)
-                    : Match<String>.Failure("", ctx);
+                    ? Match.Success(attribute.Value, ctx, "")
+                    : Match<String>.Failure(ctx, "");
             };
         }
 
@@ -42,7 +42,7 @@ namespace Langue
                     .Select(x => x.Value)
                     .ToArray();
 
-                return Match.Success(results, "", ctx);
+                return Match.Success(results, ctx, "");
             };
         }
 
@@ -54,7 +54,7 @@ namespace Langue
                     .Attributes(name)
                     .Select(x => x.Value);
 
-                return Match.Success(results, "", ctx);
+                return Match.Success(results, ctx, "");
             };
         }
 
@@ -64,8 +64,8 @@ namespace Langue
             {
                 var el = ctx.XPathSelectElement(xpath);
                 return el != null
-                    ? Match.Success(el.Value, "", ctx)
-                    : Match<String>.Failure("", ctx);
+                    ? Match.Success(el.Value, ctx, "")
+                    : Match<String>.Failure(ctx, "");
             };
         }
 
@@ -74,7 +74,7 @@ namespace Langue
             return ctx =>
             {
                 var els = ctx.XPathSelectElements(xpath);
-                return Match.Success(els.Select(x => x.Value).ToArray(), "", ctx);
+                return Match.Success(els.Select(x => x.Value).ToArray(), ctx, "");
             };
         }
 
@@ -84,13 +84,13 @@ namespace Langue
             {
                 var el = ctx.XPathSelectElement(xpath);
                 if (el == null)
-                    return Match<T>.Failure("", ctx);
+                    return Match<T>.Failure(ctx, "");
 
                 var result = body(el);
                 if (result.HasValue)
-                    return Match.Success(result.Value, "", ctx);
+                    return Match.Success(result.Value, ctx, "");
 
-                return Match<T>.Failure("", ctx);
+                return Match<T>.Failure(ctx, "");
             };
         }
 
@@ -108,10 +108,10 @@ namespace Langue
                     if (result.HasValue)
                         results.Add(result.Value);
                     else
-                        return Match<IEnumerable<T>>.Failure("", ctx);
+                        return Match<IEnumerable<T>>.Failure(ctx, "");
                 }
 
-                return Match.Success(results.ToArray(), "", ctx);
+                return Match.Success(results.ToArray(), ctx, "");
             };
         }
     }

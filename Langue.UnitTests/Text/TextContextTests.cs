@@ -137,7 +137,7 @@ namespace Langue
         {
             var ctx = new TextContext("Hello");
 
-            Pattern<object, TextContext> interleaving = c => Match<object>.Success(42, "ultimate", c);
+            Pattern<object, TextContext> interleaving = c => Match<object>.Success(42, c, "ultimate");
             ctx = ctx.WithInterleave(interleaving);
 
             ctx.Interleaving.Should().Be(interleaving);
@@ -148,7 +148,7 @@ namespace Langue
         {
             var ctx = new TextContext("Hello").Read(3);
 
-            Pattern<object, TextContext> interleaving = c => Match<object>.Success(42, "ultimate", c);
+            Pattern<object, TextContext> interleaving = c => Match<object>.Success(42, c, "ultimate");
             var newCtx = ctx.WithInterleave(interleaving);
 
             newCtx.Input.Should().Be(ctx.Input);

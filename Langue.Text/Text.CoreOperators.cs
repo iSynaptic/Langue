@@ -11,13 +11,13 @@ namespace Langue
             {
                 var result = self(ctx);
                 if (!result.HasValue)
-                    return Match<T>.Failure("", ctx);
+                    return Match<T>.Failure(ctx, "");
 
                 var tResult = pattern(result.Value);
 
                 return tResult.HasValue
-                    ? Match.Success(tResult.Value, tResult.Description, ctx, tResult.Observations)
-                    : Match<T>.Failure("", ctx);
+                    ? Match.Success(tResult.Value, ctx, tResult.Description, tResult.Observations)
+                    : Match<T>.Failure(ctx, "");
             };
         }
 
@@ -29,10 +29,10 @@ namespace Langue
                 var location = new LocationRange(context.ConsumedTo, result.Context.ConsumedTo);
 
                 var info = new MatchInfo<T>(result.Value, result.Description, location);
-                return Match.Success(info, result.Description, result.Context, result.Observations);
+                return Match.Success(info, result.Context, result.Description, result.Observations);
             }
 
-            return Match<MatchInfo<T>>.Failure(result.Description, result.Context, result.Observations);
+            return Match<MatchInfo<T>>.Failure(result.Context, result.Description, result.Observations);
         };
 
         public static Pattern<T, TextContext> InterleaveWith<T>(this Pattern<T, TextContext> @this, Pattern<Object, TextContext> interleaving) => context =>
@@ -71,8 +71,8 @@ namespace Langue
             if (secondResult.HasValue)
                 return secondResult;
 
-            return Match<T>.Failure("or",
-                context,
+            return Match<T>.Failure(context,
+                "or",
                 new ParseError(
                     $"Expected: {firstResult.Description} or {secondResult.Description}",
                     context.ReadTo.ToRange(),
@@ -88,7 +88,7 @@ namespace Langue
                 return nextResult;
             }
 
-            return Match<U>.Failure(result.Description, result.Context, result.Observations);
+            return Match<U>.Failure(result.Context, result.Description, result.Observations);
         };
 
         public static Pattern<TResult, TextContext> SelectMany<T, TIntermediate, TResult>(this Pattern<T, TextContext> @this,

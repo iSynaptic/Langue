@@ -52,7 +52,7 @@
     <Compile Include="Text\Text.CoreOperatorsTests.cs" />
     <Compile Include="Text\Text.PrimativeTests.cs" />
     <Compile Include="Text\TextContextTests.cs" />
-    <Compile Include="Text\PositionTests.cs" />
+    <Compile Include="Text\LocationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

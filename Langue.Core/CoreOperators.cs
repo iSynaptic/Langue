@@ -1,32 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Langue
 {
     public static class CoreOperators
     {
-        public static Pattern<U, TContext> Select<T, U, TContext>(this Pattern<T, TContext> @this, Func<T, U> selector) => context =>
+        public static Pattern<U, TContext> Select<T, U, TContext>(this Pattern<T, TContext> @this, Func<T, U> selector) => ctx =>
         {
-            var result = @this(context);
+            var result = @this(ctx);
             if (result.HasValue)
-                return Match.Success(selector(result.Value), result.Description, result.Context, result.Observations);
+                return Match.Success(selector(result.Value), result.Context, result.Description, result.Observations);
 
-            return Match<U>.Failure(result.Description, result.Context, result.Observations);
+            return Match<U>.Failure(result.Context, result.Description, result.Observations);
         };
 
-        public static Pattern<U, TContext> SelectMany<T, U, TContext>(this Pattern<T, TContext> @this, Func<T, Pattern<U, TContext>> selector) => context =>
+        public static Pattern<U, TContext> SelectMany<T, U, TContext>(this Pattern<T, TContext> @this, Func<T, Pattern<U, TContext>> selector) => ctx =>
         {
-            var result = @this(context);
+            var result = @this(ctx);
             if (result.HasValue)
             {
                 var nextResult = selector(result.Value)(result.Context);
                 return nextResult;
             }
 
-            return Match<U>.Failure(result.Description, result.Context, result.Observations);
+            return Match<U>.Failure(result.Context, result.Description, result.Observations);
         };
 
         public static Pattern<TResult, TContext> SelectMany<T, TIntermediate, TResult, TContext>(this Pattern<T, TContext> @this,
@@ -34,12 +32,12 @@ namespace Langue
                                                                             Func<T, TIntermediate, TResult> combiner)
             => SelectMany(@this, x => selector(x).Select(y => combiner(x, y)));
 
-        public static Pattern<T, TContext> DescribeAs<T, TContext>(this Pattern<T, TContext> @this, string description) => context =>
+        public static Pattern<T, TContext> DescribeAs<T, TContext>(this Pattern<T, TContext> @this, string description) => ctx =>
         {
-            var result = @this(context);
+            var result = @this(ctx);
             return result.HasValue
-                ? Match.Success(result.Value, description, result.Context, result.Observations)
-                : Match<T>.Failure(description, result.Context, result.Observations);
+                ? Match.Success(result.Value, result.Context, description, result.Observations)
+                : Match<T>.Failure(result.Context, description, result.Observations);
         };
 
         public static Pattern<IEnumerable<T>, TContext> Optional<T, TContext>(this Pattern<IEnumerable<T>, TContext> pattern)
@@ -50,7 +48,7 @@ namespace Langue
                 if (result.HasValue)
                     return result;
 
-                return Match.Success(Enumerable.Empty<T>(), result.Description, ctx, result.Observations);
+                return Match.Success(Enumerable.Empty<T>(), ctx, result.Description, result.Observations);
             };
         }
 
@@ -68,7 +66,7 @@ namespace Langue
                     ? result.Context
                     : ctx;
 
-                return Match.Success(val, result.Description, newCtx, result.Observations);
+                return Match.Success(val, newCtx, result.Description, result.Observations);
             };
         }
 
@@ -76,11 +74,11 @@ namespace Langue
         {
             return ctx =>
             {
-                var items = parser(ctx);
-                if (items.HasValue)
-                    return Match.Success(items.Value.SelectMany(x => x), "", ctx);
+                var results = parser(ctx);
+                if (results.HasValue)
+                    return Match.Success(results.Value.SelectMany(x => x), ctx, results.Description, results.Observations);
                 else
-                    return Match<IEnumerable<T>>.Failure("", ctx);
+                    return Match<IEnumerable<T>>.Failure(ctx, results.Description, results.Observations);
             };
         }
 
@@ -94,7 +92,7 @@ namespace Langue
 
                 return predicate(result.Value)
                     ? result
-                    : Match<T>.Failure("", ctx);
+                    : Match<T>.Failure(ctx, result.Description, result.Observations);
             };
         }
 
@@ -108,7 +106,7 @@ namespace Langue
 
                 return !predicate(result.Value)
                     ? result
-                    : Match<T>.Failure("", ctx);
+                    : Match<T>.Failure(ctx, result.Description, result.Observations);
             };
         }
     }

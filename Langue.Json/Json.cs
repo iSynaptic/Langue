@@ -33,9 +33,9 @@ namespace Langue
             {
                 var value = ctx.NavigateTo(path);
                 if (value == null)
-                    return Match<T>.Failure(description, ctx);
+                    return Match<T>.Failure(ctx, description);
 
-                return Match.Success(selector(value), description, ctx);
+                return Match.Success(selector(value), ctx, description);
             };
         }
 
@@ -81,7 +81,7 @@ namespace Langue
             {
                 var value = ctx.NavigateTo(path);
                 if (value == null)
-                    return Match<IEnumerable<T>>.Failure("", ctx);
+                    return Match<IEnumerable<T>>.Failure(ctx, "");
 
                 if (value.Type == JTokenType.Array)
                 {
@@ -94,10 +94,10 @@ namespace Langue
                         if (item.HasValue)
                             results.Add(item.Value);
                         else
-                            return Match<IEnumerable<T>>.Failure("", ctx);
+                            return Match<IEnumerable<T>>.Failure(ctx, "");
                     }
 
-                    return Match.Success(results.ToArray(), "", ctx);
+                    return Match.Success(results.ToArray(), ctx, "");
                 }
 
                 return itemParser.Select(x => new[] { x })(value);
@@ -110,7 +110,7 @@ namespace Langue
             {
                 var value = ctx.NavigateTo(path);
                 if (value == null || value.Type != JTokenType.Object)
-                    return Match<T>.Failure("", ctx);
+                    return Match<T>.Failure(ctx, "");
 
                 var doc = (JObject)value;
                 return body(doc);
@@ -123,7 +123,7 @@ namespace Langue
             {
                 var value = ctx.NavigateTo(path);
                 if (value == null || value.Type != JTokenType.Object)
-                    return Match<IEnumerable<T>>.Failure("", ctx);
+                    return Match<IEnumerable<T>>.Failure(ctx, "");
 
                 var results = new List<T>();
 
@@ -136,10 +136,10 @@ namespace Langue
                     if (item.HasValue)
                         results.Add(item.Value);
                     else
-                        return Match<IEnumerable<T>>.Failure("", ctx);
+                        return Match<IEnumerable<T>>.Failure(ctx, "");
                 }
 
-                return Match.Success(results.ToArray(), "", ctx);
+                return Match.Success(results.ToArray(), ctx, "");
             };
         }
 
@@ -149,7 +149,7 @@ namespace Langue
             {
                 var value = ctx.NavigateTo(path);
                 if (value == null || value.Type != JTokenType.Array)
-                    return Match<IEnumerable<T>>.Failure("", ctx);
+                    return Match<IEnumerable<T>>.Failure(ctx, "");
 
                 var array = (JArray)value;
 
@@ -161,10 +161,10 @@ namespace Langue
                     if (item.HasValue)
                         results.Add(item.Value);
                     else
-                        return Match<IEnumerable<T>>.Failure("", ctx);
+                        return Match<IEnumerable<T>>.Failure(ctx, "");
                 }
 
-                return Match.Success(results.ToArray(), "", ctx);
+                return Match.Success(results.ToArray(), ctx, "");
             };
         }
     }
