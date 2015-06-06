@@ -6,22 +6,26 @@ namespace Langue
 {
     public static class CoreOperators
     {
-        public static Pattern<U, TContext> Select<T, U, TContext>(this Pattern<T, TContext> @this, Func<T, U> selector) => ctx =>
+        public static Pattern<U, TContext> Select<T, U, TContext>(this Pattern<T, TContext> self, Func<T, U> selector) => ctx =>
         {
-            var result = @this(ctx);
+            var result = self(ctx);
             if (result.HasValue)
                 return Match.Success(selector(result.Value), result.Context, result.Description, result.Observations);
 
             return Match<U>.Failure(result.Context, result.Description, result.Observations);
         };
 
-        public static Pattern<U, TContext> SelectMany<T, U, TContext>(this Pattern<T, TContext> @this, Func<T, Pattern<U, TContext>> selector) => ctx =>
+        public static Pattern<U, TContext> SelectMany<T, U, TContext>(this Pattern<T, TContext> self, Func<T, Pattern<U, TContext>> selector) => ctx =>
         {
-            var result = @this(ctx);
+            var result = self(ctx);
             if (result.HasValue)
             {
                 var nextResult = selector(result.Value)(result.Context);
-                return nextResult;
+                var obs = result.Observations.Concat(nextResult.Observations);
+
+                return nextResult.HasValue
+                    ? Match.Success(nextResult.Value, nextResult.Context, nextResult.Description, obs)
+                    : Match<U>.Failure(nextResult.Context, nextResult.Description, obs);
             }
 
             return Match<U>.Failure(result.Context, result.Description, result.Observations);
@@ -32,9 +36,9 @@ namespace Langue
                                                                             Func<T, TIntermediate, TResult> combiner)
             => SelectMany(@this, x => selector(x).Select(y => combiner(x, y)));
 
-        public static Pattern<T, TContext> DescribeAs<T, TContext>(this Pattern<T, TContext> @this, string description) => ctx =>
+        public static Pattern<T, TContext> DescribeAs<T, TContext>(this Pattern<T, TContext> self, string description) => ctx =>
         {
-            var result = @this(ctx);
+            var result = self(ctx);
             return result.HasValue
                 ? Match.Success(result.Value, result.Context, description, result.Observations)
                 : Match<T>.Failure(result.Context, description, result.Observations);
@@ -70,11 +74,11 @@ namespace Langue
             };
         }
 
-        public static Pattern<IEnumerable<T>, TContext> Flatten<T, TContext>(this Pattern<IEnumerable<IEnumerable<T>>, TContext> parser)
+        public static Pattern<IEnumerable<T>, TContext> Flatten<T, TContext>(this Pattern<IEnumerable<IEnumerable<T>>, TContext> self)
         {
             return ctx =>
             {
-                var results = parser(ctx);
+                var results = self(ctx);
                 if (results.HasValue)
                     return Match.Success(results.Value.SelectMany(x => x), ctx, results.Description, results.Observations);
                 else
@@ -82,11 +86,11 @@ namespace Langue
             };
         }
 
-        public static Pattern<T, TContext> Where<T, TContext>(this Pattern<T, TContext> @this, Func<T, bool> predicate)
+        public static Pattern<T, TContext> Where<T, TContext>(this Pattern<T, TContext> self, Func<T, bool> predicate)
         {
             return ctx =>
             {
-                var result = @this(ctx);
+                var result = self(ctx);
                 if (!result.HasValue)
                     return result;
 
@@ -96,11 +100,11 @@ namespace Langue
             };
         }
 
-        public static Pattern<T, TContext> Unless<T, TContext>(this Pattern<T, TContext> @this, Func<T, bool> predicate)
+        public static Pattern<T, TContext> Unless<T, TContext>(this Pattern<T, TContext> self, Func<T, bool> predicate)
         {
             return ctx =>
             {
-                var result = @this(ctx);
+                var result = self(ctx);
                 if (!result.HasValue)
                     return result;
 

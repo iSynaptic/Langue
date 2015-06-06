@@ -8,38 +8,38 @@ namespace Langue
 {
     public static partial class Text
     {
-        public static Pattern<IEnumerable<T>, TextContext> Delimit<T>(this Pattern<T, TextContext> parser, Char delimiter) 
-            => parser.Delimit(Char(delimiter));
+        public static Pattern<IEnumerable<T>, TextContext> Delimit<T>(this Pattern<T, TextContext> self, Char delimiter) 
+            => self.Delimit(Char(delimiter));
 
-        public static Pattern<IEnumerable<T>, TextContext> Delimit<T>(this Pattern<T, TextContext> parser, String delimiter)
-            => parser.Delimit(Literal(delimiter));
+        public static Pattern<IEnumerable<T>, TextContext> Delimit<T>(this Pattern<T, TextContext> self, String delimiter)
+            => self.Delimit(Literal(delimiter));
 
-        public static Pattern<IEnumerable<T>, TextContext> Delimit<T, TDelimiter>(this Pattern<T, TextContext> parser, Pattern<TDelimiter, TextContext> delimiter)
+        public static Pattern<IEnumerable<T>, TextContext> Delimit<T, TDelimiter>(this Pattern<T, TextContext> self, Pattern<TDelimiter, TextContext> delimiter)
         {
-            return from first in parser
+            return from first in self
                    from remaining in
                        (
                            from d in delimiter
-                           from item in parser
+                           from item in self
                            select item
                        ).ZeroOrMore("many")
                    select new[] { first }.Concat(remaining);
         }
 
-        public static Pattern<IEnumerable<T>, TextContext> ZeroOrMore<T>(this Pattern<T, TextContext> parser, string description)
+        public static Pattern<IEnumerable<T>, TextContext> ZeroOrMore<T>(this Pattern<T, TextContext> self, string description)
         {
-            if (parser == null) throw new ArgumentNullException(nameof(parser));
+            if (self == null) throw new ArgumentNullException(nameof(self));
 
             return context =>
             {
                 var ctx = context;
                 var result = new List<T>();
-                var m = parser(ctx);
+                var m = self(ctx);
                 while (m.HasValue)
                 {
                     result.Add(m.Value);
                     ctx = m.Context;
-                    m = parser(ctx);
+                    m = self(ctx);
                 }
 
                 return Match.Success(result, ctx, description);
