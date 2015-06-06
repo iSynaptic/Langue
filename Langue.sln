@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Langue.Json", "Langue.Json\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Langue.UnitTests", "Langue.UnitTests\Langue.UnitTests.csproj", "{7A0D985F-D673-4D7D-B548-3A3C7C3940CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Langue.Xml", "Langue.Xml\Langue.Xml.csproj", "{096258C8-6368-4E06-B141-84C15D9D1E49}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Langue.Xml", "Langue.Xml\Langue.Xml.csproj", "{1C80C204-0897-407B-8069-DEDCE815AD5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{7A0D985F-D673-4D7D-B548-3A3C7C3940CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A0D985F-D673-4D7D-B548-3A3C7C3940CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A0D985F-D673-4D7D-B548-3A3C7C3940CA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{096258C8-6368-4E06-B141-84C15D9D1E49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{096258C8-6368-4E06-B141-84C15D9D1E49}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{096258C8-6368-4E06-B141-84C15D9D1E49}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{096258C8-6368-4E06-B141-84C15D9D1E49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C80C204-0897-407B-8069-DEDCE815AD5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C80C204-0897-407B-8069-DEDCE815AD5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C80C204-0897-407B-8069-DEDCE815AD5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C80C204-0897-407B-8069-DEDCE815AD5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

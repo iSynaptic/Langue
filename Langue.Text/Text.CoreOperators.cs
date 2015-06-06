@@ -5,6 +5,22 @@ namespace Langue
 {
     public static partial class Text
     {
+        public static Pattern<T, TContext> To<T, TContext>(this Pattern<string, TContext> self, Pattern<T, TextContext> pattern)
+        {
+            return ctx =>
+            {
+                var result = self(ctx);
+                if (!result.HasValue)
+                    return Match<T>.Failure("", ctx);
+
+                var tResult = pattern(result.Value);
+
+                return tResult.HasValue
+                    ? Match.Success(tResult.Value, tResult.Description, ctx, tResult.Observations)
+                    : Match<T>.Failure("", ctx);
+            };
+        }
+
         public static Pattern<MatchInfo<T>, TextContext> WithInfo<T>(this Pattern<T, TextContext> self) => context =>
         {
             var result = self(context);

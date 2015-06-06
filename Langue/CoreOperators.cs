@@ -111,6 +111,5 @@ namespace Langue
                     : Match<T>.Failure("", ctx);
             };
         }
-
     }
 }
