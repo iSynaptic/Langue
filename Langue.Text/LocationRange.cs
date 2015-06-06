@@ -2,18 +2,18 @@ using System;
 
 namespace Langue
 {
-    public struct PositionRange : IEquatable<PositionRange>
+    public struct LocationRange : IEquatable<LocationRange>
     {
-        public PositionRange(Position start, Position end)
+        public LocationRange(Location start, Location end)
         {
             if (end < start)
-                throw new ArgumentOutOfRangeException(nameof(end), "End position must not be before the start position.");
+                throw new ArgumentOutOfRangeException(nameof(end), "End location must not be before the start location.");
 
             Start = start;
             End = end;
         }
 
-        public bool Equals(PositionRange other) 
+        public bool Equals(LocationRange other) 
             => Start.Equals(other.Start) &&
                End.Equals(other.End);
 
@@ -22,7 +22,7 @@ namespace Langue
             if (ReferenceEquals(obj, null)) return false;
             if (GetType() != obj.GetType()) return false;
 
-            return Equals((PositionRange)obj);
+            return Equals((LocationRange)obj);
         }
 
         public override int GetHashCode()
@@ -35,13 +35,13 @@ namespace Langue
             return hash;
         }
 
-        public static Boolean operator ==(PositionRange left, PositionRange right)
+        public static Boolean operator ==(LocationRange left, LocationRange right)
             => left.Equals(right);
 
-        public static Boolean operator !=(PositionRange left, PositionRange right)
+        public static Boolean operator !=(LocationRange left, LocationRange right)
             => !(left.Equals(right));
 
-        public Position Start { get; }
-        public Position End { get; }
+        public Location Start { get; }
+        public Location End { get; }
     }
 }

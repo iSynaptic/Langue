@@ -14,8 +14,8 @@ namespace Langue
             var ctx = new TextContext(input);
 
             ctx.Input.Should().Be(input);
-            ctx.ReadTo.Should().Be(Position.Beginning);
-            ctx.ConsumedTo.Should().Be(Position.Beginning);
+            ctx.ReadTo.Should().Be(Location.Beginning);
+            ctx.ConsumedTo.Should().Be(Location.Beginning);
             ctx.Source.Should().Be(String.Empty);
             ctx.AtEnd.Should().BeTrue();
             ctx.Interleaving.Should().BeNull();
@@ -28,8 +28,8 @@ namespace Langue
             var ctx = new TextContext(input);
 
             ctx.Input.Should().Be(input);
-            ctx.ReadTo.Should().Be(Position.Beginning);
-            ctx.ConsumedTo.Should().Be(Position.Beginning);
+            ctx.ReadTo.Should().Be(Location.Beginning);
+            ctx.ConsumedTo.Should().Be(Location.Beginning);
             ctx.Current.Should().Be('H');
             ctx.Source.Should().Be(String.Empty);
             ctx.AtEnd.Should().BeFalse();
@@ -52,8 +52,8 @@ namespace Langue
 
             ctx = ctx.Read(7);
 
-            ctx.ReadTo.Should().Be(new Position(7, 1, 8));
-            ctx.ConsumedTo.Should().Be(Position.Beginning);
+            ctx.ReadTo.Should().Be(new Location(7, 1, 8));
+            ctx.ConsumedTo.Should().Be(Location.Beginning);
             ctx.Current.Should().Be('W');
         }
 
@@ -63,12 +63,12 @@ namespace Langue
             string input = "Hello\r\nWorld!";
             var ctx = new TextContext(input).Read(6);
 
-            ctx.ReadTo.Should().Be(new Position(6, 1, 7));
+            ctx.ReadTo.Should().Be(new Location(6, 1, 7));
 
             ctx = ctx.Read(1);
 
-            ctx.ReadTo.Should().Be(new Position(7, 2, 1));
-            ctx.ConsumedTo.Should().Be(Position.Beginning);
+            ctx.ReadTo.Should().Be(new Location(7, 2, 1));
+            ctx.ConsumedTo.Should().Be(Location.Beginning);
         }
 
         [Test]
@@ -79,8 +79,8 @@ namespace Langue
             
             ctx = ctx.Read(7);
 
-            ctx.ReadTo.Should().Be(new Position(7, 2, 1));
-            ctx.ConsumedTo.Should().Be(Position.Beginning);
+            ctx.ReadTo.Should().Be(new Location(7, 2, 1));
+            ctx.ConsumedTo.Should().Be(Location.Beginning);
         }
 
         [Test]
@@ -128,8 +128,8 @@ namespace Langue
 
             ctx = ctx.Consume();
 
-            ctx.ReadTo.Should().Be(Position.Beginning);
-            ctx.ConsumedTo.Should().Be(Position.Beginning);
+            ctx.ReadTo.Should().Be(Location.Beginning);
+            ctx.ConsumedTo.Should().Be(Location.Beginning);
         }
 
         [Test]
@@ -168,8 +168,8 @@ namespace Langue
             TextContext ctx = input;
 
             ctx.Input.Should().Be(input);
-            ctx.ReadTo.Should().Be(Position.Beginning);
-            ctx.ConsumedTo.Should().Be(Position.Beginning);
+            ctx.ReadTo.Should().Be(Location.Beginning);
+            ctx.ConsumedTo.Should().Be(Location.Beginning);
             ctx.Current.Should().Be('H');
             ctx.Source.Should().Be(String.Empty);
             ctx.AtEnd.Should().BeFalse();

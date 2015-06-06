@@ -7,19 +7,19 @@ namespace Langue
     {
         private static readonly IEnumerable<MatchObservation> Empty = new MatchObservation[0];
 
-        public ParseError(string message, PositionRange position)
+        public ParseError(string message, LocationRange position)
             : this(message, position, null)
         {
         }
 
-        public ParseError(string message, PositionRange position, IEnumerable<MatchObservation> observations) 
+        public ParseError(string message, LocationRange position, IEnumerable<MatchObservation> observations) 
             : base(message)
         {
             Position = position;
             Observations = observations?.ToArray() ?? Empty;
         }
 
-        public PositionRange Position { get; }
+        public LocationRange Position { get; }
         public IEnumerable<MatchObservation> Observations { get; }
     }
 }

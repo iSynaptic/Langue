@@ -4,8 +4,8 @@ namespace Langue
 {
     public class TextContext
     {
-        public readonly Position ConsumedTo;
-        public readonly Position ReadTo;
+        public readonly Location ConsumedTo;
+        public readonly Location ReadTo;
 
         public readonly string Input;
         public readonly string Source;
@@ -26,11 +26,11 @@ namespace Langue
         }
 
         public TextContext(string input, string source, Pattern<object, TextContext> interleaving)
-            : this(input, source, interleaving, default(Position), default(Position))
+            : this(input, source, interleaving, default(Location), default(Location))
         {
         }
 
-        private TextContext(string input, string source, Pattern<object, TextContext> interleaving, Position consumedTo, Position readTo)
+        private TextContext(string input, string source, Pattern<object, TextContext> interleaving, Location consumedTo, Location readTo)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
 

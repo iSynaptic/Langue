@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace Langue
 {
-    public struct ResultInfo<T>
+    public struct MatchInfo<T>
     {
-        public ResultInfo(T value, string description, PositionRange position)
+        public MatchInfo(T value, string description, LocationRange location)
         {
             Value = value;
             Description = description;
-            Position = position;
+            Location = location;
         }
 
         public T Value { get; }
         public string Description { get; }
-        public PositionRange Position { get; }
+        public LocationRange Location { get; }
     }
 }

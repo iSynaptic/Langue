@@ -5,18 +5,18 @@ namespace Langue
 {
     public static partial class Text
     {
-        public static Pattern<ResultInfo<T>, TextContext> WithInfo<T>(this Pattern<T, TextContext> self) => context =>
+        public static Pattern<MatchInfo<T>, TextContext> WithInfo<T>(this Pattern<T, TextContext> self) => context =>
         {
             var result = self(context);
             if (result.HasValue)
             {
-                var location = new PositionRange(context.ConsumedTo, result.Context.ConsumedTo);
+                var location = new LocationRange(context.ConsumedTo, result.Context.ConsumedTo);
 
-                var info = new ResultInfo<T>(result.Value, result.Description, location);
+                var info = new MatchInfo<T>(result.Value, result.Description, location);
                 return Match.Success(info, result.Description, result.Context, result.Observations);
             }
 
-            return Match<ResultInfo<T>>.Failure(result.Description, result.Context, result.Observations);
+            return Match<MatchInfo<T>>.Failure(result.Description, result.Context, result.Observations);
         };
 
         public static Pattern<T, TextContext> InterleaveWith<T>(this Pattern<T, TextContext> @this, Pattern<Object, TextContext> interleaving) => context =>

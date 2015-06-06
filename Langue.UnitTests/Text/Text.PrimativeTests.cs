@@ -22,11 +22,11 @@ namespace Langue
             result.HasValue.Should().BeFalse();
             result.Description.Should().Be("literal");
             result.Observations.Should().HaveCount(1);
-            result.Context.ConsumedTo.Should().Be(Position.Beginning);
-            result.Context.ReadTo.Should().Be(Position.Beginning);
+            result.Context.ConsumedTo.Should().Be(Location.Beginning);
+            result.Context.ReadTo.Should().Be(Location.Beginning);
 
             var error = result.Observations.Cast<ParseError>().First();
-            error.Position.Should().Be(Position.Beginning.ToRange());
+            error.Position.Should().Be(Location.Beginning.ToRange());
             error.Message.Should().Be("Unexpected: end of input");
         }
 
@@ -40,11 +40,11 @@ namespace Langue
             result.HasValue.Should().BeFalse();
             result.Description.Should().Be("literal");
             result.Observations.Should().HaveCount(1);
-            result.Context.ConsumedTo.Should().Be(Position.Beginning);
-            result.Context.ReadTo.Should().Be(new Position(3, 1, 4));
+            result.Context.ConsumedTo.Should().Be(Location.Beginning);
+            result.Context.ReadTo.Should().Be(new Location(3, 1, 4));
 
             var error = result.Observations.Cast<ParseError>().First();
-            error.Position.Should().Be(new Position(3, 1, 4).ToRange());
+            error.Position.Should().Be(new Location(3, 1, 4).ToRange());
             error.Message.Should().Be("Unexpected: character 'p'");
         }
 
@@ -58,11 +58,11 @@ namespace Langue
             result.HasValue.Should().BeFalse();
             result.Description.Should().Be("literal");
             result.Observations.Should().HaveCount(1);
-            result.Context.ConsumedTo.Should().Be(Position.Beginning);
-            result.Context.ReadTo.Should().Be(new Position(5, 1, 6));
+            result.Context.ConsumedTo.Should().Be(Location.Beginning);
+            result.Context.ReadTo.Should().Be(new Location(5, 1, 6));
 
             var error = result.Observations.Cast<ParseError>().First();
-            error.Position.Should().Be(new Position(5, 1, 6).ToRange());
+            error.Position.Should().Be(new Location(5, 1, 6).ToRange());
             error.Message.Should().Be("Unexpected: end of input");
         }
 
@@ -77,8 +77,8 @@ namespace Langue
             result.HasValue.Should().BeTrue();
             result.Description.Should().Be("literal");
             result.Observations.Should().BeEmpty();
-            result.Context.ConsumedTo.Should().Be(new Position(5, 1, 6));
-            result.Context.ReadTo.Should().Be(new Position(5, 1, 6));
+            result.Context.ConsumedTo.Should().Be(new Location(5, 1, 6));
+            result.Context.ReadTo.Should().Be(new Location(5, 1, 6));
         }
     }
 }
