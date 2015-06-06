@@ -34,6 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CoreOperators.cs" />
+    <Compile Include="Hashing.cs" />
     <Compile Include="IMatch.cs" />
     <Compile Include="Match.cs" />
     <Compile Include="MatchObservation.cs" />

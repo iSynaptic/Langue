@@ -42,7 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TextContext.cs" />
-    <Compile Include="Hashing.cs" />
     <Compile Include="Text.CoreOperators.cs" />
     <Compile Include="Text.Modifiers.cs" />
     <Compile Include="Text.Primatives.cs" />

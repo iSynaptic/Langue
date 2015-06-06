@@ -63,15 +63,6 @@ namespace Langue
                     firstResult.Observations.Concat(secondResult.Observations)));
         };
 
-        public static Pattern<U, TextContext> Select<T, U>(this Pattern<T, TextContext> @this, Func<T, U> selector) => context =>
-        {
-            var result = @this(context);
-            if (result.HasValue)
-                return Match.Success(selector(result.Value), result.Description, result.Context, result.Observations);
-
-            return Match<U>.Failure(result.Description, result.Context, result.Observations);
-        };
-
         public static Pattern<U, TextContext> SelectMany<T, U>(this Pattern<T, TextContext> @this, Func<T, Pattern<U, TextContext>> selector) => context =>
         {
             var result = @this.Interleave()(context);
@@ -88,14 +79,5 @@ namespace Langue
                                                                             Func<T, Pattern<TIntermediate, TextContext>> selector,
                                                                             Func<T, TIntermediate, TResult> combiner) 
             => SelectMany(@this, x => selector(x).Select(y => combiner(x, y)));
-
-        public static Pattern<T, TextContext> DescribeAs<T>(this Pattern<T, TextContext> @this, string description) => context =>
-        {
-            var result = @this(context);
-            return result.HasValue
-                ? Match.Success(result.Value, description, result.Context, result.Observations)
-                : Match<T>.Failure(description, result.Context, result.Observations);
-        };
     }
-
 }
