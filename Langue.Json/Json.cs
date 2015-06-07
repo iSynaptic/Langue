@@ -7,35 +7,32 @@ namespace Langue
 {
     public static class Json
     {
-        private static JToken NavigateTo(this JToken value, string path)
+        private static JToken NavigateTo(this JToken self, string path)
         {
             string[] parts = path.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (string part in parts)
             {
-                if (value.Type != JTokenType.Object)
+                if (self.Type != JTokenType.Object)
                     return null;
 
-                var obj = (JObject)value;
+                var obj = (JObject)self;
 
-                if (!obj.TryGetValue(part, out value))
+                if (!obj.TryGetValue(part, out self))
                     return null;
             }
 
-            return value;
+            return self;
         }
 
-        private static Pattern<T, JToken> SelectValue<T>(string path, Func<JToken, T> selector)
+        private static Pattern<T, JToken> SelectValue<T>(string path, Func<JToken, T> selector) => ctx =>
         {
-            return ctx =>
-            {
-                var value = ctx.NavigateTo(path);
-                if (value == null)
-                    return Match<T>.Failure(ctx);
+            var value = ctx.NavigateTo(path);
+            if (value == null)
+                return Match<T>.Failure(ctx);
 
-                return Match.Success(selector(value), ctx);
-            };
-        }
+            return Match.Success(selector(value), ctx);
+        };
 
         public static Pattern<string, JToken> String() => String("");
 
@@ -72,89 +69,42 @@ namespace Langue
         public static Pattern<long, JToken> Int64(string path)
             => SelectValue(path, x => x.ToObject<long>());
 
-        public static Pattern<IEnumerable<T>, JToken> OneOrMore<T>(string path, Pattern<T, JToken> itemParser)
+        public static Pattern<IEnumerable<T>, JToken> Array<T>(string path, Pattern<T, JToken> pattern) => ctx =>
         {
-            return ctx =>
+            var value = ctx.NavigateTo(path);
+            if (value == null || value.Type != JTokenType.Array)
+                return Match<IEnumerable<T>>.Failure(ctx);
+
+            var array = (JArray)value;
+
+            var results = new List<T>();
+
+            foreach (var element in array)
             {
-                var value = ctx.NavigateTo(path);
-                if (value == null)
+                var item = pattern(element);
+                if (item.HasValue)
+                    results.Add(item.Value);
+                else
                     return Match<IEnumerable<T>>.Failure(ctx);
+            }
 
-                if (value.Type == JTokenType.Array)
-                {
-                    var array = (JArray)value;
-                    var results = new List<T>();
+            return Match.Success(results.ToArray(), ctx);
+        };
 
-                    foreach (var element in array)
-                    {
-                        var item = itemParser(element);
-                        if (item.HasValue)
-                            results.Add(item.Value);
-                        else
-                            return Match<IEnumerable<T>>.Failure(ctx);
-                    }
-
-                    return Match.Success(results.ToArray(), ctx);
-                }
-
-                return itemParser.Select(x => new[] { x })(value);
-            };
-        }
-
-        public static Pattern<T, JToken> Object<T>(string path, Pattern<T, JToken> body)
+        public static Pattern<IEnumerable<T>, JToken> OneOrMore<T>(string path, Pattern<T, JToken> itemParser) => ctx =>
         {
-            return ctx =>
+            var value = ctx.NavigateTo(path);
+            if (value == null)
+                return Match<IEnumerable<T>>.Failure(ctx);
+
+            if (value.Type == JTokenType.Array)
             {
-                var value = ctx.NavigateTo(path);
-                if (value == null || value.Type != JTokenType.Object)
-                    return Match<T>.Failure(ctx);
-
-                var doc = (JObject)value;
-                return body(doc);
-            };
-        }
-
-        public static Pattern<IEnumerable<T>, JToken> HashArray<T>(string path, Func<string, Pattern<T, JToken>> selector)
-        {
-            return ctx =>
-            {
-                var value = ctx.NavigateTo(path);
-                if (value == null || value.Type != JTokenType.Object)
-                    return Match<IEnumerable<T>>.Failure(ctx);
-
-                var results = new List<T>();
-
-                var doc = (JObject)value;
-                foreach (var property in doc.Properties())
-                {
-                    var itemPattern = selector(property.Name);
-                    var item = itemPattern(property.Value);
-
-                    if (item.HasValue)
-                        results.Add(item.Value);
-                    else
-                        return Match<IEnumerable<T>>.Failure(ctx);
-                }
-
-                return Match.Success(results.ToArray(), ctx);
-            };
-        }
-
-        public static Pattern<IEnumerable<T>, JToken> Array<T>(string path, Pattern<T, JToken> pattern)
-        {
-            return ctx =>
-            {
-                var value = ctx.NavigateTo(path);
-                if (value == null || value.Type != JTokenType.Array)
-                    return Match<IEnumerable<T>>.Failure(ctx);
-
                 var array = (JArray)value;
-
                 var results = new List<T>();
 
                 foreach (var element in array)
                 {
-                    var item = pattern(element);
+                    var item = itemParser(element);
                     if (item.HasValue)
                         results.Add(item.Value);
                     else
@@ -162,7 +112,42 @@ namespace Langue
                 }
 
                 return Match.Success(results.ToArray(), ctx);
-            };
-        }
+            }
+
+            return itemParser.Select(x => new[] { x })(value);
+        };
+
+        public static Pattern<T, JToken> Object<T>(string path, Pattern<T, JToken> body) => ctx =>
+        {
+            var value = ctx.NavigateTo(path);
+            if (value == null || value.Type != JTokenType.Object)
+                return Match<T>.Failure(ctx);
+
+            var doc = (JObject)value;
+            return body(doc);
+        };
+
+        public static Pattern<IEnumerable<T>, JToken> HashArray<T>(string path, Func<string, Pattern<T, JToken>> selector) => ctx =>
+        {
+            var value = ctx.NavigateTo(path);
+            if (value == null || value.Type != JTokenType.Object)
+                return Match<IEnumerable<T>>.Failure(ctx);
+
+            var results = new List<T>();
+
+            var doc = (JObject)value;
+            foreach (var property in doc.Properties())
+            {
+                var itemPattern = selector(property.Name);
+                var item = itemPattern(property.Value);
+
+                if (item.HasValue)
+                    results.Add(item.Value);
+                else
+                    return Match<IEnumerable<T>>.Failure(ctx);
+            }
+
+            return Match.Success(results.ToArray(), ctx);
+        };
     }
 }

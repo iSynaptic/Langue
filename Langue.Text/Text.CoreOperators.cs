@@ -5,28 +5,25 @@ namespace Langue
 {
     public static partial class Text
     {
-        public static Pattern<T, TContext> To<T, TContext>(this Pattern<string, TContext> self, Pattern<T, TextContext> pattern)
+        public static Pattern<T, TContext> To<T, TContext>(this Pattern<string, TContext> self, Pattern<T, TextContext> pattern) => ctx =>
         {
-            return ctx =>
-            {
-                var result = self(ctx);
-                if (!result.HasValue)
-                    return Match<T>.Failure(ctx, "");
+            var result = self(ctx);
+            if (!result.HasValue)
+                return Match<T>.Failure(ctx, "");
 
-                var tResult = pattern(result.Value);
+            var tResult = pattern(result.Value);
 
-                return tResult.HasValue
-                    ? Match.Success(tResult.Value, ctx, tResult.Description, tResult.Observations)
-                    : Match<T>.Failure(ctx, "");
-            };
-        }
+            return tResult.HasValue
+                ? Match.Success(tResult.Value, ctx, tResult.Description, tResult.Observations)
+                : Match<T>.Failure(ctx, "");
+        };
 
-        public static Pattern<MatchInfo<T>, TextContext> WithInfo<T>(this Pattern<T, TextContext> self) => context =>
+        public static Pattern<MatchInfo<T>, TextContext> WithInfo<T>(this Pattern<T, TextContext> self) => ctx =>
         {
-            var result = self(context);
+            var result = self(ctx);
             if (result.HasValue)
             {
-                var location = new LocationRange(context.ConsumedTo, result.Context.ConsumedTo);
+                var location = new LocationRange(ctx.ConsumedTo, result.Context.ConsumedTo);
 
                 var info = new MatchInfo<T>(result.Value, result.Description, location);
                 return Match.Success(info, result.Context, result.Description, result.Observations);
@@ -35,53 +32,53 @@ namespace Langue
             return Match<MatchInfo<T>>.Failure(result.Context, result.Description, result.Observations);
         };
 
-        public static Pattern<T, TextContext> InterleaveWith<T>(this Pattern<T, TextContext> @this, Pattern<Object, TextContext> interleaving) => context =>
+        public static Pattern<T, TextContext> InterleaveWith<T>(this Pattern<T, TextContext> self, Pattern<Object, TextContext> interleaving) => ctx =>
         {
-            interleaving = context.Interleaving != null
-                                ? context.Interleaving.Or(interleaving)
+            interleaving = ctx.Interleaving != null
+                                ? ctx.Interleaving.Or(interleaving)
                                 : interleaving;
 
-            var newContext = context.WithInterleave(interleaving);
+            var newContext = ctx.WithInterleave(interleaving);
 
-            return @this(newContext);
+            return self(newContext);
         };
 
-        public static Pattern<T, TextContext> Interleave<T>(this Pattern<T, TextContext> @this) => context =>
+        public static Pattern<T, TextContext> Interleave<T>(this Pattern<T, TextContext> self) => ctx =>
         {
-            if (context.Interleaving != null)
+            if (ctx.Interleaving != null)
             {
-                var result = context.Interleaving(context);
+                var result = ctx.Interleaving(ctx);
                 while (result.HasValue)
                 {
-                    context = result.Context;
-                    result = context.Interleaving(context);
+                    ctx = result.Context;
+                    result = ctx.Interleaving(ctx);
                 }
             }
 
-            return @this(context);
+            return self(ctx);
         };
 
-        public static Pattern<T, TextContext> Or<T>(this Pattern<T, TextContext> first, Pattern<T, TextContext> second) => context =>
+        public static Pattern<T, TextContext> Or<T>(this Pattern<T, TextContext> self, Pattern<T, TextContext> second) => ctx =>
         {
-            var firstResult = first(context);
+            var firstResult = self(ctx);
             if (firstResult.HasValue)
                 return firstResult;
 
-            var secondResult = second(context);
+            var secondResult = second(ctx);
             if (secondResult.HasValue)
                 return secondResult;
 
-            return Match<T>.Failure(context,
+            return Match<T>.Failure(ctx,
                 "or",
                 new ParseError(
                     $"Expected: {firstResult.Description} or {secondResult.Description}",
-                    context.ReadTo.ToRange(),
+                    ctx.ReadTo.ToRange(),
                     firstResult.Observations.Concat(secondResult.Observations)));
         };
 
-        public static Pattern<U, TextContext> SelectMany<T, U>(this Pattern<T, TextContext> @this, Func<T, Pattern<U, TextContext>> selector) => context =>
+        public static Pattern<U, TextContext> SelectMany<T, U>(this Pattern<T, TextContext> self, Func<T, Pattern<U, TextContext>> selector) => ctx =>
         {
-            var result = @this.Interleave()(context);
+            var result = self.Interleave()(ctx);
             if (result.HasValue)
             {
                 var nextResult = selector(result.Value).Interleave()(result.Context);
@@ -91,9 +88,9 @@ namespace Langue
             return Match<U>.Failure(result.Context, result.Description, result.Observations);
         };
 
-        public static Pattern<TResult, TextContext> SelectMany<T, TIntermediate, TResult>(this Pattern<T, TextContext> @this,
+        public static Pattern<TResult, TextContext> SelectMany<T, TIntermediate, TResult>(this Pattern<T, TextContext> self,
                                                                             Func<T, Pattern<TIntermediate, TextContext>> selector,
                                                                             Func<T, TIntermediate, TResult> combiner) 
-            => SelectMany(@this, x => selector(x).Select(y => combiner(x, y)));
+            => SelectMany(self, x => selector(x).Select(y => combiner(x, y)));
     }
 }

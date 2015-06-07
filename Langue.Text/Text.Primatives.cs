@@ -14,16 +14,13 @@ namespace Langue
         public static readonly Pattern<string, TextContext> Empty =
             ctx => Match.Success("", ctx, "empty");
 
-        public static Pattern<char, TextContext> Char(char c)
+        public static Pattern<char, TextContext> Char(char c) => context =>
         {
-            return context =>
-            {
-                if (context.AtEnd)
-                    return Match<char>.Failure(context, "character ", new ParseError("Unexpected: end of input", context.ReadTo.ToRange()));
+            if (context.AtEnd)
+                return Match<char>.Failure(context, "character ", new ParseError("Unexpected: end of input", context.ReadTo.ToRange()));
 
-                return null;
-            };
-        }
+            return null;
+        };
 
         public static Pattern<string, TextContext> Literal(string expected) => Literal(expected, "literal");
 

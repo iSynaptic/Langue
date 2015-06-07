@@ -14,17 +14,15 @@ namespace Langue
         public static Pattern<IEnumerable<T>, TextContext> Delimit<T>(this Pattern<T, TextContext> self, String delimiter)
             => self.Delimit(Literal(delimiter));
 
-        public static Pattern<IEnumerable<T>, TextContext> Delimit<T, TDelimiter>(this Pattern<T, TextContext> self, Pattern<TDelimiter, TextContext> delimiter)
-        {
-            return from first in self
-                   from remaining in
-                       (
-                           from d in delimiter
-                           from item in self
-                           select item
-                       ).ZeroOrMore("many")
-                   select new[] { first }.Concat(remaining);
-        }
+        public static Pattern<IEnumerable<T>, TextContext> Delimit<T, TDelimiter>(this Pattern<T, TextContext> self, Pattern<TDelimiter, TextContext> delimiter) =>
+            from first in self
+            from remaining in
+                (
+                    from d in delimiter
+                    from item in self
+                    select item
+                ).ZeroOrMore("zero or more")
+            select new[] { first }.Concat(remaining);
 
         public static Pattern<IEnumerable<T>, TextContext> ZeroOrMore<T>(this Pattern<T, TextContext> self, string description)
         {
