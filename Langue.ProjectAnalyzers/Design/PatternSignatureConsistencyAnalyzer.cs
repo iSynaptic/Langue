@@ -2,10 +2,11 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Langue.ProjectAnalyzers
+namespace Langue.ProjectAnalyzers.Design
 {
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+
     using static Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -34,36 +35,21 @@ namespace Langue.ProjectAnalyzers
                     ctx.ReportDiagnostic(ExtendedObjectParameterNameIncorrect.With(parameter.Locations[0]));
             }
 
-            if (method.ReturnType.OriginalDefinition == patternDelegate)
+            if (patternDelegate != null && method.ReturnType.OriginalDefinition == patternDelegate)
             {
-                var signatureWalker = new MethodSignatureWalker(ctx, patternDelegate);
-                signatureWalker.Visit(method.DeclaringSyntaxReferences[0].GetSyntax());
+                var methodSyntax = (MethodDeclarationSyntax)method.DeclaringSyntaxReferences[0].GetSyntax();
+                if(methodSyntax.ExpressionBody != null && methodSyntax.ExpressionBody.Expression.IsKind(SyntaxKind.SimpleLambdaExpression))
+                {
+                    CheckLambdaExpression((SimpleLambdaExpressionSyntax)methodSyntax.ExpressionBody.Expression, ctx);
+                }
             }
         }
 
-        private class MethodSignatureWalker : CSharpSyntaxWalker
+        private void CheckLambdaExpression(SimpleLambdaExpressionSyntax node, SymbolAnalysisContext context)
         {
-            private readonly SymbolAnalysisContext _context;
-            private readonly INamedTypeSymbol _patternDelegateType;
-
-            public MethodSignatureWalker(SymbolAnalysisContext context, INamedTypeSymbol patternDelegateType)
+            if (node.Parameter.Identifier.Text != "ctx")
             {
-                _context = context;
-                _patternDelegateType = patternDelegateType;
-            }
-
-            public override void VisitArrowExpressionClause(ArrowExpressionClauseSyntax node)
-            {
-                if(node.Expression.IsKind(SyntaxKind.SimpleLambdaExpression))
-                    base.VisitArrowExpressionClause(node);
-            }
-
-            public override void VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node)
-            {
-                if(node.Parameter.Identifier.Text != "ctx")
-                {
-                    _context.ReportDiagnostic(PatternContextArgumentNameIncorrect.With(node.Parameter.GetLocation()));
-                }
+                context.ReportDiagnostic(PatternContextArgumentNameIncorrect.With(node.Parameter.GetLocation()));
             }
         }
     }
