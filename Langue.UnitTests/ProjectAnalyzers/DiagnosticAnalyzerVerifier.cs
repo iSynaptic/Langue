@@ -52,10 +52,10 @@ namespace Langue.ProjectAnalyzers
     /// </summary>
     public abstract partial class DiagnosticAnalyzerVerifier
     {
-        private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromAssembly(typeof(object).Assembly);
-        private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromAssembly(typeof(Enumerable).Assembly);
-        private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromAssembly(typeof(CSharpCompilation).Assembly);
-        private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromAssembly(typeof(Compilation).Assembly);
+        private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+        private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
+        private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
+        private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
 
         internal static string DefaultFilePathPrefix = "Test";
         internal static string CSharpDefaultFileExt = "cs";
@@ -436,7 +436,7 @@ namespace Langue.ProjectAnalyzers
 
             foreach(var asm in GetContextAssembliesFromTypes().Select(x => x.Assembly).Distinct())
             {
-                solution = solution.AddMetadataReference(projectId, MetadataReference.CreateFromAssembly(asm));
+                solution = solution.AddMetadataReference(projectId, MetadataReference.CreateFromFile(asm.Location));
             }
 
             int count = 0;

@@ -20,7 +20,7 @@ namespace Langue.ProjectAnalyzers.Design
             ctx.RegisterCompilationStartAction(c =>
             {
                 var patternDelegate = c.Compilation.GetTypeByMetadataName("Langue.Pattern`2");
-                ctx.RegisterSymbolAction(sac => AnalyzeMethod(sac, patternDelegate), SymbolKind.Method);
+                c.RegisterSymbolAction(sac => AnalyzeMethod(sac, patternDelegate), SymbolKind.Method);
             });
         }
 
