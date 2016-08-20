@@ -18,6 +18,9 @@ namespace Langue
 
         public static Match<T, TContext> Success<T, TContext>(T value, TContext context, string description, IEnumerable<MatchObservation> observations)
             => new Match<T, TContext>(value, context, description, observations);
+
+        public static Match<T, TContext> WithContext<T, TContext>(this IMatch<T, TContext> self, TContext context) =>
+            new Match<T, TContext>(self.Value, context, self.Description, self.Observations);
     }
 
     public static class Match<T>

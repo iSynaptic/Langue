@@ -69,6 +69,17 @@ namespace Langue
         public static Pattern<long, JToken> Int64(string path)
             => SelectValue(path, x => x.ToObject<long>());
 
+        public static Pattern<T, JToken> Enum<T>() => Enum<T>("");
+
+        public static Pattern<T, JToken> Enum<T>(string path)
+            => SelectValue(path, x => (T)System.Enum.Parse(typeof(T), x.ToObject<string>()));
+
+        public static Pattern<IEnumerable<T>, JToken> AsArray<T>(this Pattern<T, JToken> self)
+            => Array("", self);
+
+        public static Pattern<IEnumerable<T>, JToken> AsArray<T>(this Pattern<T, JToken> self, string path)
+            => Array(path, self);
+
         public static Pattern<IEnumerable<T>, JToken> Array<T>(string path, Pattern<T, JToken> pattern) => ctx =>
         {
             var value = ctx.NavigateTo(path);
@@ -124,7 +135,7 @@ namespace Langue
                 return Match<T>.Failure(ctx);
 
             var doc = (JObject)value;
-            return body(doc);
+            return body(doc).WithContext(ctx);
         };
 
         public static Pattern<IEnumerable<T>, JToken> HashArray<T>(string path, Func<string, Pattern<T, JToken>> selector) => ctx =>
